@@ -39,6 +39,10 @@ public class Game {
 		isRunning = true;
     }
 
+	public Player getCurrentPlayer(){
+		return currentPlayer;
+	}
+
     private void setupBoard() {
         chessBoard.getBoard()[4][7] = whitePlayer.getPieceList().get(0);	//King
 		chessBoard.getBoard()[3][7] = whitePlayer.getPieceList().get(1);	//Queen
@@ -164,14 +168,12 @@ public class Game {
 			waitingPlayer = whitePlayer;
 			timerPlayer1.stop();
 			timerPlayer2.start(display);
-			System.out.println(timerPlayer1.getElapsedTimeInSeconds());
 		}
 		else {
 			currentPlayer = whitePlayer;
 			waitingPlayer = blackPlayer;
 			timerPlayer1.start(display);
 			timerPlayer2.stop();
-			System.out.println(timerPlayer2.getElapsedTimeInSeconds());
 		}
 		turn++;
 	}
