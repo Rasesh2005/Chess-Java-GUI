@@ -16,10 +16,13 @@ public class Display extends JPanel {
 	private static final Color LIGHT_TILE = new Color(210, 165, 125);
 	private static final Color DARK_TILE = new Color(175, 115, 70);
     private Graphics2D g2d;
+    private Game game;
+    private ChessBoard chessboard;
     
-    public Display(){
-        
-        this.setPreferredSize(new Dimension(this.TILE_SIZE*8, this.TILE_SIZE*8));
+    public Display(Game game){
+        this.setPreferredSize(new Dimension(TILE_SIZE*8, TILE_SIZE*8));
+        this.game = game;
+		this.chessboard = game.getChessBoard();
     }
 
     @Override
@@ -27,10 +30,22 @@ public class Display extends JPanel {
         super.paint(g);
         g2d = (Graphics2D) g;
         drawBoard();
+        drawPieces();
+    }
+
+    private void drawPieces() {
+        Piece[][] board = chessboard.getBoard();
+        for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board.length; j++) {
+				if(board[i][j] != null) { //(currentMovingPiece == null || currentMovingPiece.getPiece() != board[i][j])
+                    	//if board location is not null and there is not a piece moving or if this is not a moving piece
+					drawPiece(board[i][j], i, j);
+				}
+			}
+		}
     }
 
     private void drawBoard() {
-	    //paint the board tiles
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {
 	            if(
@@ -45,4 +60,9 @@ public class Display extends JPanel {
 	        }
 	    }
 	}
+
+    private void drawPiece(Piece piece, int i, int j) {
+        
+    }
+
 }
