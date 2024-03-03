@@ -42,6 +42,7 @@ public class Display extends JPanel {
 	private Timer timer;
 	private String message1;
 	private String message2;
+	private int timeLimit = 300;
     
     public Display(Game game){
         this.setPreferredSize(new Dimension(TILE_SIZE*10 + 30, TILE_SIZE*8));
@@ -81,22 +82,31 @@ public class Display extends JPanel {
         drawPieces();
 
 		g2d.setFont(new Font("Copperplate", Font.PLAIN, 21));
+		int timeplayer1 = ((int) (timeLimit - game.getTimerPlayer1().getElapsedTimeInSeconds()));
+		int timeplayer2 = ((int) (timeLimit - game.getTimerPlayer2().getElapsedTimeInSeconds()));
 		if(game.getTurn() %2 == 0){
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer2().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*1);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime(timeplayer2), TILE_SIZE*8+10, TILE_SIZE*1);
 			g2d.setColor(Color.LIGHT_GRAY);
-			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer1().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*7);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime(timeplayer1), TILE_SIZE*8+10, TILE_SIZE*7);
 		}
 		else {
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer1().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*7);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime(timeplayer1), TILE_SIZE*8+10, TILE_SIZE*7);
 			g2d.setColor(Color.LIGHT_GRAY);
-			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer2().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*1);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime(timeplayer2), TILE_SIZE*8+10, TILE_SIZE*1);
 		}
+
+		checkTimeStatus(timeplayer1, timeplayer2);
 		
 		drawMovingPiece();
 		drawMessage();
     }
+
+	public void setn(int n){
+		this.timeLimit = 5*(n+1)*60;
+		repaint();
+	}
 
 	public void drawMove(Piece piece, BoardCoordinate tile) { //Animation
 		final double srcX = piece.getCoordinate().getX() * TILE_SIZE;
@@ -142,6 +152,22 @@ public class Display extends JPanel {
 		timer.restart();
 	}
 	
+	public void checkTimeStatus(int tp1, int tp2){
+		if(tp1 <= 0 ){
+			message1 = "Time Out";
+			message2 = "Black Wins";
+			game.getTimerPlayer1().stop();
+			game.getTimerPlayer2().stop();
+			game.setRunning(false);
+		}
+		else if(tp2 <= 0){
+			message1 = "Time Out";
+			message2 = "White Wins";
+			game.getTimerPlayer1().stop();
+			game.getTimerPlayer2().stop();
+			game.setRunning(false);
+		}
+	}
 
     private void drawMovingPiece() {
 		if(currentMovingPiece == null) return;
