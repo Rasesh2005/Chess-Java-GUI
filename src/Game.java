@@ -7,6 +7,8 @@ public class Game {
     private Player whitePlayer;
 	private Player blackPlayer;
 	private Player currentPlayer;
+	private ChessTimer timerPlayer1;
+    private ChessTimer timerPlayer2;
 	private Player waitingPlayer;
     private ChessBoard chessBoard;
 	private Validator validator;
@@ -21,6 +23,10 @@ public class Game {
         blackPlayer = p2;
         currentPlayer = p1;
         waitingPlayer = p2;
+		timerPlayer1 = new ChessTimer();
+        timerPlayer2 = new ChessTimer();
+		// timerPlayer1.stop();
+		// timerPlayer2.stop();
 
         p1.initialize("WHITE");
         p2.initialize("BLACK");
@@ -99,6 +105,10 @@ public class Game {
 		else if(selectedPiece != null) {
 			moves = selectedPiece.accept(validator);
 			if(moves.contains(tile)) {
+				if(turn == 1)
+				{
+					timerPlayer1.start(display);
+				}
 				display.drawMove(selectedPiece, tile);
 				move(selectedPiece, tile, display);
 			}
@@ -122,7 +132,7 @@ public class Game {
 		}
 
 		checkGameStatus(display);
-		changeTurn();
+		changeTurn(display);
 	}
 
 
@@ -148,17 +158,24 @@ public class Game {
 		display.setMessages(message1, message2);
 		display.repaint();
 	}
-	private void changeTurn() {
+	private void changeTurn(Display display) {
 		if(currentPlayer == whitePlayer) {
 			currentPlayer = blackPlayer;
 			waitingPlayer = whitePlayer;
+			timerPlayer1.stop();
+			timerPlayer2.start(display);
+			System.out.println(timerPlayer1.getElapsedTimeInSeconds());
 		}
 		else {
 			currentPlayer = whitePlayer;
 			waitingPlayer = blackPlayer;
-			turn++;
+			timerPlayer1.start(display);
+			timerPlayer2.stop();
+			System.out.println(timerPlayer2.getElapsedTimeInSeconds());
 		}
+		turn++;
 	}
+
 
 	private void promote(Piece piece) {
 		BoardCoordinate coor = piece.getCoordinate();
@@ -207,8 +224,19 @@ public class Game {
 		chessBoard.getBoard()[x][y].setCoordinate(new BoardCoordinate(x,y));
 	}
 
+	public int getTurn(){
+		return turn;
+	}
+
 	public boolean isRunning() {
 		return this.isRunning;
 	}
 
+	public ChessTimer getTimerPlayer1() {
+		return timerPlayer1;
+	}
+
+	public ChessTimer getTimerPlayer2() {
+		return timerPlayer2;
+	}
 }
