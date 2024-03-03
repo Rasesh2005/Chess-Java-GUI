@@ -1,6 +1,11 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Player {
     private String color;
@@ -35,6 +40,13 @@ public class Player {
 	}
 	
 	public void addToGraveyard(Piece piece) {
+		try {
+            // Open an audio input stream from the specified file
+			Display.audioInputStreamVar=AudioSystem.getAudioInputStream(new File("src/audio/capture.wav").getAbsoluteFile());
+            
+        } catch (UnsupportedAudioFileException | IOException err) {
+            err.printStackTrace();
+        }
 		graveyard.push(piece);
 		removePiece(piece);
 	}

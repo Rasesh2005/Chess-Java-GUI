@@ -1,4 +1,9 @@
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -7,6 +12,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.Timer;
@@ -23,6 +30,8 @@ import java.awt.FontMetrics;
 public class Display extends JPanel {
 
     public static final int TILE_SIZE = 80;
+	public static String soundFilePath = "src/audio/move.wav";
+
 	private static final Color GREEN = new Color(0x96, 0xFF, 0x96);
 	private static final Color LIGHT_BLUE = new Color(0xC8, 0xE6, 0xFF);
 	private static final Color DARK_BLUE = new Color(0x7D, 0xC8, 0xFF);
@@ -45,8 +54,18 @@ public class Display extends JPanel {
 	private String message2;
 	private int timeLimit = 300;
 	public JButton resignButton = new JButton("Resign");
-    
+	static AudioInputStream audioInputStreamMove;
+    static AudioInputStream audioInputStreamCapture;
+	static AudioInputStream audioInputStreamVar;
     public Display(Game game){
+		try {
+            // Open an audio input stream from the specified file
+			audioInputStreamMove = AudioSystem.getAudioInputStream(new File("src/audio/move.wav").getAbsoluteFile());
+            audioInputStreamCapture = AudioSystem.getAudioInputStream(new File("src/audio/capture.wav").getAbsoluteFile());
+            
+        } catch (UnsupportedAudioFileException | IOException err) {
+            err.printStackTrace();
+        }
         this.setPreferredSize(new Dimension(TILE_SIZE*10 + 30, TILE_SIZE*8));
         this.game = game;
 		this.chessboard = game.getChessBoard();
@@ -158,6 +177,23 @@ public class Display extends JPanel {
             		inAnimation = false;
             		currentMovingPiece = null;
             		timer.stop();
+					try {
+						// Get a Clip object to play the sound
+						Clip clip = AudioSystem.getClip();
+			
+						// Open the audio stream and load the samples into the clip
+						clip.open(audioInputStreamVar);
+			
+						// Start playing the sound
+						clip.setFramePosition(0);
+						clip.start();
+						Thread.sleep(50);
+						// Close the clip
+						// clip.close();
+					} catch (IOException | LineUnavailableException | InterruptedException err) {
+						err.printStackTrace();
+					}
+        
             	}
             	else {
             		inAnimation = true;

@@ -1,4 +1,9 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class ChessBoard {
 	private Piece board[][] = new Piece[8][8];
@@ -32,16 +37,26 @@ public class ChessBoard {
 		Piece tilePiece = getPiece(destX, destY);
 		
 		if(tilePiece != null) {
-			tilePiece.getOwner().addToGraveyard(tilePiece);
-		}
+		tilePiece.getOwner().addToGraveyard(tilePiece);
+	}else{
+		try {
+            // Open an audio input stream from the specified file
+			Display.audioInputStreamVar=AudioSystem.getAudioInputStream(new File("src/audio/move.wav").getAbsoluteFile());
+            
+        } catch (UnsupportedAudioFileException | IOException err) {
+            err.printStackTrace();
+        }
+	}
+		
 		this.previousMoves.push(new MoveHistory(piece,new BoardCoordinate(sourceX, sourceY)));
+		
 		if(piece instanceof Pawn) {
 			((Pawn)piece).setFirstMove(false);
-			String color = piece.getColor();
-			if((destX != sourceX) && tilePiece == null) {// en passant case
-				if(color.equals("White")) {
+			String color = piece.getColor(); 
+			
+			if((destX < sourceX || destX > sourceX) && tilePiece == null) {
+				if(color.equals("WHITE")) {
 					direction = Validator.UP;
-					// UP DOWN LEFT RIGHT are static variable stating direction
 				}
 				else {
 					direction = Validator.DOWN;
@@ -51,26 +66,29 @@ public class ChessBoard {
 				tilePiece.getOwner().addToGraveyard(tilePiece);
 				board[destX][destY-direction] = null;
 			}
-		}else if(piece instanceof King) {
+		}	
+		else if(piece instanceof King) {
 			((King)piece).setHasMoved(true);
 			
-			if(destX == sourceX + 2 ) {// short castling
+			if(destX == sourceX + 2 ) {
 				Piece rightRook = board[destX+1][destY];
 				board[destX - 1][destY] = rightRook;
 				rightRook.setCoordinate(new BoardCoordinate(destX-1,destY));
 				
 				board[destX + 1][destY] = null;
 			}
-			else if(destX == sourceX - 2) {// long castling
+			else if(destX == sourceX - 2) {
 				Piece leftRook = board[destX-2][destY];
 				board[destX + 1][destY] = leftRook;
 				leftRook.setCoordinate(new BoardCoordinate(destX+1,destY));
 
 				board[destX - 2][destY] = null;
 			}
-		}else if(piece instanceof Rook) {
+		}
+		else if(piece instanceof Rook) {
 			((Rook)piece).setHasMoved(true);
 		}
+		
 		board[sourceX][sourceY] = null;
 		board[destX][destY] = piece;
 		piece.setCoordinate(tile);

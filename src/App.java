@@ -22,10 +22,11 @@ public class App {
         gameWindow.getContentPane().setBackground(new Color(155,155,200));
 		
 		gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gameDisplay.setLayout(null);
 		gameWindow.add(gameDisplay);
         gameWindow.pack();
-		gameWindow.setVisible(true);
 		gameWindow.setLocationRelativeTo(null);
+		gameWindow.setVisible(true);
 		int n = askTime();
 		gameDisplay.setn(n);
 
