@@ -117,6 +117,7 @@ public class Display extends JPanel {
             		remainingFrame--;
             		x = x + incrementX;
             		y = y + incrementY;
+					currentMovingPiece.update(x,y);
             	}
 				repaint();
             }
@@ -127,7 +128,7 @@ public class Display extends JPanel {
 
     private void drawMovingPiece() {
 		if(currentMovingPiece == null) return;
-		drawPiece(currentMovingPiece.getPiece(), currentMovingPiece.getX()/TILE_SIZE, (int) currentMovingPiece.getY()/TILE_SIZE);
+		drawPiece(currentMovingPiece.getPiece(), currentMovingPiece.getX()/TILE_SIZE, currentMovingPiece.getY()/TILE_SIZE);
 	}
 	
 	private void drawPieces() {

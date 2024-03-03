@@ -71,7 +71,6 @@ public class Validator implements ValidMoveVisitor{
 			coordinates.add(chessBoard.getPiece(x + LEFT, y + direction).getCoordinate());
 		}
 		legalEnPassant(pawn, coordinates, direction, x, y);
-		System.out.println(coordinates.size());
 		return coordinates;
 	}
     private boolean legalEnPassant(Pawn pawn, List<BoardCoordinate> coordinates, int direction, int x, int y) {
