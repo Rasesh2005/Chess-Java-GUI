@@ -26,21 +26,22 @@ public class App {
         gameWindow.pack();
 		gameWindow.setVisible(true);
 		gameWindow.setLocationRelativeTo(null);
-		askTime();
+		int n = askTime();
+		gameDisplay.setn(n);
 
 		
 		new MouseInput(gameDisplay);
 	}
-	static public void askTime() {
+	static public int askTime() {
 
-		String[] promote = {"5", "10", "15"};
+		String[] promote = {"5 minutes", "10 minutes", "15 minutes"};
 
 		JFrame frame = new JFrame();
 		frame.setResizable(true);	
 
 		int n = JOptionPane.showOptionDialog(frame,
-				"What do you want to promote to?",
-				"Choose a piece:",
+				"How long should each player play?",
+				"Chess",
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.QUESTION_MESSAGE,
 				null, promote, promote[0]);
@@ -48,8 +49,8 @@ public class App {
 		while(true) {
 			if(n == JOptionPane.CLOSED_OPTION) {
 				n = JOptionPane.showOptionDialog(frame,
-						"What do you want to promote to?",
-						"Choose a piece:",
+						"How long should each player play?",
+						"Choose a time option:",
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.QUESTION_MESSAGE,
 						null, promote, promote[0]);
@@ -57,6 +58,7 @@ public class App {
 			}
 			break;
 		}
+		return n;
 	}
 
 }
