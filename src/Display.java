@@ -21,7 +21,7 @@ import java.awt.FontMetrics;
 
 public class Display extends JPanel {
 
-    public static final int TILE_SIZE = 100;
+    public static final int TILE_SIZE = 80;
 	private static final Color GREEN = new Color(0x96, 0xFF, 0x96);
 	private static final Color LIGHT_BLUE = new Color(0xC8, 0xE6, 0xFF);
 	private static final Color DARK_BLUE = new Color(0x7D, 0xC8, 0xFF);
@@ -31,6 +31,7 @@ public class Display extends JPanel {
 	private static final Color DARK_TILE = new Color(119, 149, 86);
     private Graphics2D g2d;
     private Game game;
+	private int fontSize = (int)(TILE_SIZE * 8.0 / 7);
     private ChessBoard chessboard;
 	private Image images[][] = new Image[2][6];
 	private boolean inAnimation;
@@ -43,7 +44,7 @@ public class Display extends JPanel {
 	private String message2;
     
     public Display(Game game){
-        this.setPreferredSize(new Dimension(TILE_SIZE*8, TILE_SIZE*8));
+        this.setPreferredSize(new Dimension(TILE_SIZE*10 + 30, TILE_SIZE*8));
         this.game = game;
 		this.chessboard = game.getChessBoard();
 		this.highlights = new LinkedList<BoardCoordinate>();
@@ -78,7 +79,23 @@ public class Display extends JPanel {
         drawBoard();
 		highlightTiles(sourceHighlight, enemyHighlights, highlights);
         drawPieces();
+
+		g2d.setFont(new Font("Copperplate", Font.PLAIN, 21));
+		if(game.getTurn() %2 == 0){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer2().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*1);
+			g2d.setColor(Color.LIGHT_GRAY);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer1().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*7);
+		}
+		else {
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer1().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*7);
+			g2d.setColor(Color.LIGHT_GRAY);
+			g2d.drawString("Time Left :- "+ ChessTimer.getTime((int) (300 - game.getTimerPlayer2().getElapsedTimeInSeconds())), TILE_SIZE*8+10, TILE_SIZE*1);
+		}
+		
 		drawMovingPiece();
+		drawMessage();
     }
 
 	public void drawMove(Piece piece, BoardCoordinate tile) { //Animation
@@ -107,19 +124,19 @@ public class Display extends JPanel {
 			private double y = srcY;
 			
             public void actionPerformed(ActionEvent e) {
-				if(remainingFrame == 0) {
-					inAnimation = false;
+            	if(remainingFrame == 0) {
+            		inAnimation = false;
             		currentMovingPiece = null;
             		timer.stop();
             	}
             	else {
-					inAnimation = true;
+            		inAnimation = true;
             		remainingFrame--;
             		x = x + incrementX;
             		y = y + incrementY;
-					currentMovingPiece.update(x,y);
+            		currentMovingPiece.update(x, y);
             	}
-				repaint();
+            	repaint();
             }
         });
 		timer.restart();
@@ -128,7 +145,9 @@ public class Display extends JPanel {
 
     private void drawMovingPiece() {
 		if(currentMovingPiece == null) return;
-		drawPiece(currentMovingPiece.getPiece(), currentMovingPiece.getX()/TILE_SIZE, currentMovingPiece.getY()/TILE_SIZE);
+		drawPiece(currentMovingPiece.getPiece(),  currentMovingPiece.getX()/ TILE_SIZE,  currentMovingPiece.getY()/ TILE_SIZE);
+		
+		
 	}
 	
 	private void drawPieces() {
@@ -144,54 +163,60 @@ public class Display extends JPanel {
     }
 
     private void drawBoard() {
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 8; j++) {
-	            if(
-	                (i % 2 == 0 && j % 2 == 0) || // Both are even
-	                (i % 2 == 1 && j % 2 == 1)    // Both are odd
-	            ) {
-	                g2d.setColor(DARK_TILE);
-	            } else {
+				 if (i>=8){
+					g2d.setColor(Color.WHITE);}
+					else if(
+						(i % 2 == 0 && j % 2 == 0) || // Both are even
+						(i % 2 == 1 && j % 2 == 1)    // Both are odd
+					) {
+						g2d.setColor(DARK_TILE);
+					} 
+				else {
 	                g2d.setColor(LIGHT_TILE);
 	            }
 	            g2d.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-	        }
-	    }
+			}
+		}
+		for(int i = 0 ; i<8; i++){
+		g2d.fillRect(10* TILE_SIZE, i * TILE_SIZE, 30, TILE_SIZE);
+		}
 	}
 
     private void drawPiece(Piece piece, double x, double y) {
         if(piece.getColor().equals("WHITE")) {
 			if(Pawn.class.isInstance(piece))
-				g2d.drawImage(images[0][5], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[0][5], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Rook.class.isInstance(piece))
-				g2d.drawImage(images[0][2], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);		
+				g2d.drawImage(images[0][2], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);		
 			else if(Knight.class.isInstance(piece))
-				g2d.drawImage(images[0][4], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[0][4], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Bishop.class.isInstance(piece))
-				g2d.drawImage(images[0][3], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[0][3], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Queen.class.isInstance(piece))
-				g2d.drawImage(images[0][1], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[0][1], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(King.class.isInstance(piece))
-				g2d.drawImage(images[0][0], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[0][0], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 		}
 		else {
 			if(Pawn.class.isInstance(piece))
-				g2d.drawImage(images[1][5], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[1][5], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Rook.class.isInstance(piece))
-				g2d.drawImage(images[1][2], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);		
+				g2d.drawImage(images[1][2],(int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);		
 			else if(Knight.class.isInstance(piece))
-				g2d.drawImage(images[1][4], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[1][4], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Bishop.class.isInstance(piece))
-				g2d.drawImage(images[1][3], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[1][3],(int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(Queen.class.isInstance(piece))
-				g2d.drawImage(images[1][1], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[1][1], (int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 			else if(King.class.isInstance(piece))
-				g2d.drawImage(images[1][0], (int)(TILE_SIZE * x), (int)(TILE_SIZE * y), null);	
+				g2d.drawImage(images[1][0],(int) (TILE_SIZE * x), (int) (TILE_SIZE * y), null);	
 		}
     }
 
 	private Image getPieceImage(String piece, String color){
-		ImageIcon icon = new ImageIcon(getClass().getResource("../bin/images/" + color + "_" + piece + ".png"));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/" + color + "_" + piece + ".png"));
 		Image image = icon.getImage().getScaledInstance(TILE_SIZE, TILE_SIZE, Image.SCALE_SMOOTH);
 		icon = new ImageIcon(image, icon.getDescription());
 		return icon.getImage();
@@ -255,7 +280,7 @@ public class Display extends JPanel {
 	// dekhna pdega
 	public void drawMessage() {
 		if(message1 != null && message2 != null) {
-			int fontSize = (int)(TILE_SIZE * 8.0 / 7);
+			
 			int startingX, startingY;
 			g2d.setFont(new Font("Copperplate", Font.PLAIN, fontSize));
 			g2d.setColor(Color.BLACK);
