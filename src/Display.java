@@ -4,6 +4,9 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -24,11 +27,22 @@ public class Display extends JPanel {
     private Game game;
     private ChessBoard chessboard;
 	private Image images[][] = new Image[2][6];
+	private boolean inAnimation;
+	private MovingPiece currentMovingPiece;
+	private List<BoardCoordinate> highlights;
+	private List<BoardCoordinate> enemyHighlights;
+	private BoardCoordinate sourceHighlight;
+	private Timer timer;
+	private String message1;
+	private String message2;
     
     public Display(Game game){
         this.setPreferredSize(new Dimension(TILE_SIZE*8, TILE_SIZE*8));
         this.game = game;
 		this.chessboard = game.getChessBoard();
+		this.highlights = new LinkedList<BoardCoordinate>();
+		this.enemyHighlights = new LinkedList<BoardCoordinate>();
+		inAnimation = false;
 		images[0][0] = getPieceImage("king", "white");
 		images[0][1] = getPieceImage("queen", "white");
 		images[0][2] = getPieceImage("rook", "white");
@@ -42,6 +56,14 @@ public class Display extends JPanel {
 		images[1][4] = getPieceImage("knight", "black");
 		images[1][5] = getPieceImage("pawn", "black");
     }
+
+	public boolean isAnimating() {
+		return inAnimation;
+	}
+
+	public Game getGame() {
+		return game;
+	}
 
     @Override
     public void paint(Graphics g) {
@@ -70,9 +92,9 @@ public class Display extends JPanel {
 	                (i % 2 == 0 && j % 2 == 0) || // Both are even
 	                (i % 2 == 1 && j % 2 == 1)    // Both are odd
 	            ) {
-	                g2d.setColor(new Color(235, 236, 208));
+	                g2d.setColor(DARK_TILE);
 	            } else {
-	                g2d.setColor(new Color(119, 149, 86));
+	                g2d.setColor(LIGHT_TILE);
 	            }
 	            g2d.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 	        }
