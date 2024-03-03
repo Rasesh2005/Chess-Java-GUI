@@ -231,6 +231,9 @@ public class Game {
 	public boolean isRunning() {
 		return this.isRunning;
 	}
+	public void setRunning(boolean isrunning) {
+		isRunning = isrunning;
+	}
 
 	public ChessTimer getTimerPlayer1() {
 		return timerPlayer1;
