@@ -68,6 +68,22 @@ public class Display extends JPanel {
 
         resignButton.setBounds(685, 300, 100, 50);
         this.add(resignButton);
+        resignButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+					message1 = "Resign";
+					if(game.getCurrentPlayer().getColor() == "WHITE"){
+						message2 = "Black Wins";
+					};
+					if(game.getCurrentPlayer().getColor() == "BLACK"){
+						message2 = "White Wins";
+					};
+					game.getTimerPlayer1().stop();
+					game.getTimerPlayer2().stop();
+					game.setRunning(false);
+					repaint();
+                }
+            });
     }
 
 	public boolean isAnimating() {
