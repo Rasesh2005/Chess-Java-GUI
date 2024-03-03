@@ -25,7 +25,6 @@ import java.awt.FontMetrics;
 // images 0 - white, 1- black
 // peices order king, queen, rook, bishop, knight, pawn
 
-// drawmovingpiece ke saath sex ho rkha hai abhi
 
 public class Display extends JPanel {
 
