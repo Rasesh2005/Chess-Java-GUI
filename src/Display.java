@@ -1,5 +1,6 @@
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -43,6 +44,7 @@ public class Display extends JPanel {
 	private String message1;
 	private String message2;
 	private int timeLimit = 300;
+	public JButton resignButton = new JButton("Resign");
     
     public Display(Game game){
         this.setPreferredSize(new Dimension(TILE_SIZE*10 + 30, TILE_SIZE*8));
@@ -63,6 +65,9 @@ public class Display extends JPanel {
 		images[1][3] = getPieceImage("bishop", "black");
 		images[1][4] = getPieceImage("knight", "black");
 		images[1][5] = getPieceImage("pawn", "black");
+
+        resignButton.setBounds(685, 300, 100, 50);
+        this.add(resignButton);
     }
 
 	public boolean isAnimating() {
@@ -80,7 +85,6 @@ public class Display extends JPanel {
         drawBoard();
 		highlightTiles(sourceHighlight, enemyHighlights, highlights);
         drawPieces();
-
 		g2d.setFont(new Font("Copperplate", Font.PLAIN, 21));
 		int timeplayer1 = ((int) (timeLimit - game.getTimerPlayer1().getElapsedTimeInSeconds()));
 		int timeplayer2 = ((int) (timeLimit - game.getTimerPlayer2().getElapsedTimeInSeconds()));
@@ -189,7 +193,7 @@ public class Display extends JPanel {
     }
 
     private void drawBoard() {
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {
 				 if (i>=8){
 					g2d.setColor(Color.WHITE);}
@@ -204,9 +208,6 @@ public class Display extends JPanel {
 	            }
 	            g2d.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 			}
-		}
-		for(int i = 0 ; i<8; i++){
-		g2d.fillRect(10* TILE_SIZE, i * TILE_SIZE, 30, TILE_SIZE);
 		}
 	}
 
