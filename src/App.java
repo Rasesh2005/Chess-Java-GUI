@@ -27,6 +27,6 @@ public class App {
 		gameWindow.setVisible(true);
 		gameWindow.setLocationRelativeTo(null);
 
-		new MouseInput();
+		// new MouseInput();
 	}
 }

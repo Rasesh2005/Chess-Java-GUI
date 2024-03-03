@@ -2,10 +2,23 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MouseInput implements MouseListener{
+    private Display display;
+	
+	public MouseInput(Display display) {
+        this.display = display;
+        display.addMouseListener(this);
+    }
     @Override
     public void mousePressed(MouseEvent e) {
-        //DO SOMETHING TO RECEIVE CLICK CORDINATES AND CONVERT IT TO BOARD COORDINATES
-        
+        if(!display.isAnimating() && display.getGame().isRunning()) {
+			int x = e.getX() / Display.TILE_SIZE;
+	        int y = e.getY() / Display.TILE_SIZE;
+	        //System.out.println("mouse click: " + e.getX() + ", " + e.getY());
+	        //System.out.println("highlightX, highlightY: " + x + " " + y);
+
+	        display.getGame().selectTile(new BoardCoordinate(x, y), display);
+	        display.repaint();    //after everyclick repaint
+    	}
     }
     @Override
     public void mouseClicked(MouseEvent e) {

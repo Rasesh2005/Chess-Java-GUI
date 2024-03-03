@@ -70,9 +70,9 @@ public class Display extends JPanel {
 	                (i % 2 == 0 && j % 2 == 0) || // Both are even
 	                (i % 2 == 1 && j % 2 == 1)    // Both are odd
 	            ) {
-	                g2d.setColor(DARK_TILE);
+	                g2d.setColor(new Color(235, 236, 208));
 	            } else {
-	                g2d.setColor(LIGHT_TILE);
+	                g2d.setColor(new Color(119, 149, 86));
 	            }
 	            g2d.fillRect(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 	        }
