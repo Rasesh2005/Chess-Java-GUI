@@ -2,7 +2,7 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-// piece lsit order
+// piece list order
 // king quees rook bishop knight pawn
 
 public class App {
@@ -27,6 +27,6 @@ public class App {
 		gameWindow.setVisible(true);
 		gameWindow.setLocationRelativeTo(null);
 
-		// new MouseInput();
+		new MouseInput(gameDisplay);
 	}
 }

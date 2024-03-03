@@ -1,6 +1,6 @@
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.xml.validation.Validator;
 
 public class Game {
 
@@ -27,6 +27,10 @@ public class Game {
 
         chessBoard = new ChessBoard();
         setupBoard();
+		validator = new Validator(chessBoard);
+		selectedPiece = null;
+		turn = 1;
+		isRunning = true;
     }
 
     private void setupBoard() {
@@ -80,8 +84,81 @@ public class Game {
 		return chessBoard;
 	}
 
+	public void selectTile(BoardCoordinate tile, Display display) {
+		List<BoardCoordinate> moves;
+		display.clearHighlights();
+		Piece tilePiece = chessBoard.getPiece(tile.getX(), tile.getY());
+		if(tilePiece != null && currentPlayer.equals(tilePiece.getOwner()) && selectedPiece != tilePiece //Don't select same piece
+		) {
+			selectedPiece = tilePiece;
+			moves = tilePiece.accept(validator);
+			display.setHighlights(moves);
+			display.setSourceHighlight(tilePiece.getCoordinate());
+			display.setEnemyHighlights(validator.filterForEnemyHighlights(moves, selectedPiece));
+		}
+		else if(selectedPiece != null) {
+			moves = selectedPiece.accept(validator);
+			if(moves.contains(tile)) {
+				display.drawMove(selectedPiece, tile);
+				move(selectedPiece, tile, display);
+			}
+			selectedPiece = null;
+		}
+	}
 
-	//SOME DISPLAY DEPENDANT CODE HERE REMAINING
+	private void move(Piece piece, BoardCoordinate tile, Display display) {
+		int graveyardSize = waitingPlayer.getGraveyard().size();
+		chessBoard.move(piece, tile);
+
+		if(piece instanceof Pawn) {
+			lastPawnMove = turn;
+			if(validator.legalPromotion((Pawn) piece, tile)) {
+				promote(piece);
+			}
+		}
+
+		if(waitingPlayer.getGraveyard().size() > graveyardSize) {
+			lastCapture = turn;
+		}
+
+		checkGameStatus(display);
+		changeTurn();
+	}
+
+
+	private void checkGameStatus(Display display) {
+		String message1 = null;
+		String message2 = null;
+		if(validator.underCheckmate(waitingPlayer)) {
+			message1 = "Checkmate!";
+			message2 = currentPlayer.getColor() + " wins!";
+		}
+		else if(validator.isStalemate(waitingPlayer)) {
+			message1 = "Stalemate!";
+			message2 = "Draw!";
+		}
+		else if(validator.isFiftyMove(turn, lastCapture, lastPawnMove)) {
+			message1 = "Fifty-move rule!";
+			message2 = "Draw!";
+		}
+		else {
+			return;
+		}
+		isRunning = false;
+		display.setMessages(message1, message2);
+		display.repaint();
+	}
+	private void changeTurn() {
+		if(currentPlayer == whitePlayer) {
+			currentPlayer = blackPlayer;
+			waitingPlayer = whitePlayer;
+		}
+		else {
+			currentPlayer = whitePlayer;
+			waitingPlayer = blackPlayer;
+			turn++;
+		}
+	}
 
 	private void promote(Piece piece) {
 		BoardCoordinate coor = piece.getCoordinate();

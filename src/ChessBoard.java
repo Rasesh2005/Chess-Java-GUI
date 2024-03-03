@@ -40,11 +40,11 @@ public class ChessBoard {
 			String color = piece.getColor();
 			if((destX != sourceX) && tilePiece == null) {// en passant case
 				if(color.equals("White")) {
-					// direction = Validator.UP;
+					direction = Validator.UP;
 					// UP DOWN LEFT RIGHT are static variable stating direction
 				}
 				else {
-					// direction = Validator.DOWN;
+					direction = Validator.DOWN;
 				}
 				
 				tilePiece = getPiece(destX, destY-direction);
